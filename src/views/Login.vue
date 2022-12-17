@@ -22,9 +22,12 @@
       <a-layout-content>
         <div class="login-card">
           <a-card class="login-card" :style="{ width: '360px' }" title="Login"  v-if="this.isLogin">
+            <a-col :span="24" style="margin-bottom: 15px" v-if="showTip">
+              <a-alert type="error">{{tip}}</a-alert>
+            </a-col>
             <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-              <a-form-item label="Username">
-                <a-input v-model="username" />
+              <a-form-item label="Email">
+                <a-input v-model="email" />
               </a-form-item>
               <a-form-item label="Password">
                 <a-input-password v-model="password" />
@@ -41,9 +44,12 @@
             </a-form>
           </a-card>
           <a-card class="register-card" :style="{ width: '360px' }" title="register" v-else>
+            <a-col :span="24" style="margin-bottom: 15px" v-if="showTip">
+              <a-alert type="error">{{tip}}</a-alert>
+            </a-col>
             <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
               <a-form-item label="Username">
-                <a-input v-model="username" />
+                <a-input v-model="userName" />
               </a-form-item>
               <a-form-item label="Email">
                 <a-input v-model="email" />
@@ -72,6 +78,8 @@
 import { Options, Vue } from 'vue-class-component'
 import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
 import '../assets/font/font.css'
+import { loginAPI, registerAPI } from '@/request/api'
+import { RegisterParams } from '@/request/params/RegisterParams'
 @Options({
   components: {
     HelloWorld
@@ -79,8 +87,51 @@ import '../assets/font/font.css'
 })
 export default class HomeView extends Vue {
   isLogin = true
+  userName = ''
+  email = ''
+  password = ''
+  showTip = false
+  tip = ''
   register () {
     console.log('register')
+    this.showTip = false
+    const registerParams = new RegisterParams(this.userName, this.email, this.password)
+    registerAPI(registerParams).then((res) => {
+      if (res.code === 200) {
+        this.$message.success('register success')
+        this.$router.push('/dashboard')
+      } else {
+        this.showTip = true
+        this.tip = 'register failed'
+        this.$message.error('register failed')
+      }
+      console.log(res)
+    }).catch(error => {
+      this.showTip = true
+      this.tip = error.response.data.message
+      console.log('register failed', error.response.data.message)
+    })
+  }
+
+  login () {
+    console.log('login')
+    this.showTip = false
+    const registerParams = new RegisterParams('', this.email, this.password)
+    loginAPI(registerParams).then((res) => {
+      if (res.code === 200) {
+        this.$message.success('login success')
+        this.$router.push('/dashboard')
+      } else {
+        this.showTip = true
+        this.tip = 'login failed'
+        this.$message.error('login failed')
+      }
+      console.log(res.data)
+    }).catch(error => {
+      this.showTip = true
+      this.tip = error.response.data.message
+      console.log('login failed', error.response.data.message)
+    })
   }
 
   changeLogin () {
