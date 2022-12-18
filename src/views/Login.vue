@@ -1,24 +1,7 @@
 <template>
   <div class="layout-demo" style="height: 100%;">
     <a-layout style="height: 100%;">
-      <a-layout-header>
-        <!--Horizontal layout-->
-        <div class="layout-header" style="display: flex;">
-          <div class="logo" >DevTime2Go</div>
-          <div class="login" >
-            <router-link to='/login'>
-              <a-button type="primary">
-                <template #icon>
-                  <icon-code />
-                </template>
-
-                <!-- Use the default slot to avoid extra spaces -->
-                <template #default>Login</template>
-              </a-button>
-            </router-link>
-          </div>
-        </div>
-      </a-layout-header>
+      <Header/>
       <a-layout-content>
         <div class="login-card">
           <a-card class="login-card" :style="{ width: '360px' }" title="Login"  v-if="this.isLogin">
@@ -77,12 +60,14 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
 import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
+import Header from '@/components/Header.vue'
 import '../assets/font/font.css'
 import { loginAPI, registerAPI } from '@/request/api'
 import { RegisterParams } from '@/request/params/RegisterParams'
 @Options({
   components: {
-    HelloWorld
+    HelloWorld,
+    Header
   }
 })
 export default class HomeView extends Vue {
