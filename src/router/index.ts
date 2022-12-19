@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Login from '@/views/Login.vue'
 import Dashboard from '@/views/Dashboard.vue'
+import { auth, loginAPI } from '@/request/api'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -17,7 +18,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: Dashboard
+    component: Dashboard,
+    meta: {
+      keepAlive: false,
+      login: true,
+      title: 'Dashboard'
+    }
   },
   {
     path: '/about',
@@ -32,6 +38,30 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title + ' - DevTimeGO'
+  }
+  if (to.meta.login) {
+    const token = localStorage.getItem('token')
+    if (token) {
+      auth().then((res) => {
+        next()
+      }).catch(() => {
+        next({
+          path: '/login'
+        })
+      })
+    } else {
+      next({
+        path: '/login'
+      })
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

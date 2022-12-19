@@ -105,6 +105,7 @@ export default class HomeView extends Vue {
     loginAPI(registerParams).then((res) => {
       if (res.code === 200) {
         this.$message.success('login success')
+        localStorage.setItem('token', res.data.token)
         this.$router.push('/dashboard')
       } else {
         this.showTip = true
@@ -114,8 +115,8 @@ export default class HomeView extends Vue {
       console.log(res.data)
     }).catch(error => {
       this.showTip = true
-      this.tip = error.response.data.message
-      console.log('login failed', error.response.data.message)
+      this.tip = error
+      console.log('login failed', error)
     })
   }
 

@@ -1,8 +1,8 @@
-export class ResponseBase {
+export class ResponseBase<T> {
     code: number;
     message: string;
-    data: any;
-    constructor (code: number, message: string, data: any) {
+    data: T;
+    constructor (code: number, message: string, data: T) {
       this.code = code
       this.message = message
       this.data = data
