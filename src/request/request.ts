@@ -13,10 +13,10 @@ const request = axios.create({
 
 request.interceptors.request.use(
   config => {
-    // let token = localStorage.getItem("x-auth-token");
-    // if (token) {
-    //     config.headers = {"x-auth-token": token}
-    // }
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers = { Authorization: 'Bearer ' + token }
+    }
     return config
   },
   error => {
