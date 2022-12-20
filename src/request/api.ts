@@ -6,7 +6,7 @@ import { AxiosResponse } from 'axios'
 
 export const LogoutAPI = () => instance.post('/admin/logout')
 
-export const auth = (): Promise<AxiosResponse> =>
+export const auth = (): Promise<Map<string, string>> =>
   instance.post('/user/auth')
 
 export const loginAPI = (data: RegisterParams): Promise<ResponseBase<LoginResponse>> =>

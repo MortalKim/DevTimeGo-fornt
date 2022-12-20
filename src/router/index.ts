@@ -2,7 +2,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Login from '@/views/Login.vue'
 import Dashboard from '@/views/Dashboard.vue'
-import { auth, loginAPI } from '@/request/api'
+import { auth } from '@/request/api'
+import { Constant } from '@/constant/constant'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -45,16 +46,19 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title + ' - DevTimeGO'
   }
   if (to.meta.login) {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem(Constant.KEY_TOKEN)
     if (token) {
       auth().then((res) => {
+        localStorage.setItem(Constant.KEY_USER_INFO, JSON.stringify(res))
         next()
-      }).catch(() => {
+      }).catch((e) => {
+        console.log('Auth error' + e.message)
         next({
           path: '/login'
         })
       })
     } else {
+      console.log('Auth Notoken')
       next({
         path: '/login'
       })
