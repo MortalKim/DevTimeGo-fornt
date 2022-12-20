@@ -3,8 +3,8 @@
     <a-layout style="height: 100%;">
       <Header/>
       <a-layout-content>
-        <div class="login-card">
-          <a-card class="login-card" :style="{ width: '360px' }" title="Login"  v-if="this.isLogin">
+        <div >
+          <a-card class="login-card" :style="{ width: '360px' }" title="Login"  v-if="this.isLogin" hoverable>
             <a-col :span="24" style="margin-bottom: 15px" v-if="showTip">
               <a-alert type="error">{{tip}}</a-alert>
             </a-col>
@@ -64,6 +64,7 @@ import Header from '@/components/Header.vue'
 import '../assets/font/font.css'
 import { loginAPI, registerAPI } from '@/request/api'
 import { RegisterParams } from '@/request/params/RegisterParams'
+import { Constant } from '@/constant/constant'
 @Options({
   components: {
     HelloWorld,
@@ -105,7 +106,7 @@ export default class HomeView extends Vue {
     loginAPI(registerParams).then((res) => {
       if (res.code === 200) {
         this.$message.success('login success')
-        localStorage.setItem('token', res.data.token)
+        localStorage.setItem(Constant.KEY_TOKEN, res.data.token)
         this.$router.push('/dashboard')
       } else {
         this.showTip = true
@@ -193,6 +194,7 @@ document.body.setAttribute('arco-theme', 'dark')
   display: inline-block;
   text-align: center;
   vertical-align:middle;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
 }
 
 .register-card {
