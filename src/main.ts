@@ -1,8 +1,16 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import ArcoVue from '@arco-design/web-vue'
-import '@arco-design/web-vue/dist/arco.css'
-import ArcoVueIcon from '@arco-design/web-vue/es/icon'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
-createApp(App).use(router).use(ArcoVue).use(ArcoVueIcon).mount('#app')
+const app = createApp(App)
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
+app.use(router)
+app.use(ElementPlus)
+app.mount('#app')
+//  createApp(App).use(router).use(ElementPlus).use(ArcoVueIcon).mount('#app')

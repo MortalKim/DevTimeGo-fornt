@@ -1,36 +1,29 @@
 <template>
   <div>
-    <a-layout-header style="background: var(--color-bg-1)">
+    <el-header style="background: var(--color-bg-1)">
       <!--Horizontal layout-->
       <div class="layout-header" style="display: flex;">
         <div class="logo" >DevTimeGo</div>
         <div class="modeToggle">
-          <a-switch  type="line" @change="onModeChange" v-model="isLightMode">
-            <template #checked-icon>
-              <icon-sun-fill />
-            </template>
-            <template #unchecked-icon>
-              <icon-moon-fill />
-            </template>
-          </a-switch>
+          <el-switch  type="line" @change="onModeChange" v-model="isLightMode">
+<!--            <template #checked-icon>-->
+<!--              <icon-sun-fill />-->
+<!--            </template>-->
+<!--            <template #unchecked-icon>-->
+<!--              <icon-moon-fill />-->
+<!--            </template>-->
+          </el-switch>
         </div>
         <div class="login" v-if="isNeedLogin === true">
           <router-link to='/login'>
-            <a-button type="primary">
-              <template #icon>
-                <icon-code />
-              </template>
-
-              <!-- Use the default slot to avoid extra spaces -->
-              <template #default>Login</template>
-            </a-button>
+            <el-button type="primary"><el-icon class="el-icon--left"><Avatar /></el-icon>Login</el-button>
           </router-link>
         </div>
         <div class="login" style="color: var(--color-text-1);" v-else>
             {{userName}}
         </div>
       </div>
-    </a-layout-header>
+    </el-header>
   </div>
 </template>
 
@@ -38,17 +31,14 @@
 import { Vue } from 'vue-class-component'
 import { Prop } from 'vue-property-decorator/lib/decorators/Prop'
 import { Constant } from '@/constant/constant'
+import { useDark, useToggle } from '@vueuse/core'
 export default class Header extends Vue {
   @Prop({ default: true }) isNeedLogin!: boolean;
   userName = ''
-  isLightMode = document.body.getAttribute('arco-theme') === 'light'
+  isLightMode = useDark()
   onModeChange (bool: boolean) {
     console.log(bool)
-    if (bool) {
-      document.body.setAttribute('arco-theme', 'light')
-    } else {
-      document.body.setAttribute('arco-theme', 'dark')
-    }
+    const toggleDark = useToggle(!bool)
   }
 
   mounted () {

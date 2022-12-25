@@ -1,7 +1,7 @@
 <template>
-  <a-layout style="height: 100%; width: 100%; background: var(--color-bg-1)">
+  <el-container style="height: 100%; width: 100%; background: var(--color-bg-1)">
     <Header is-need-login="false"/>
-  </a-layout>
+  </el-container>
 </template>
 
 <script>

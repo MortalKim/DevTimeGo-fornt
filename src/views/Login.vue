@@ -1,59 +1,66 @@
 <template>
   <div class="layout-demo" style="height: 100%;">
-    <a-layout style="height: 100%;">
+    <el-container style="height: 100%;">
       <Header/>
-      <a-layout-content>
+      <el-main>
         <div >
-          <a-card class="login-card" :style="{ width: '360px' }" title="Login"  v-if="this.isLogin" hoverable>
-            <a-col :span="24" style="margin-bottom: 15px" v-if="showTip">
-              <a-alert type="error">{{tip}}</a-alert>
-            </a-col>
-            <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-              <a-form-item label="Email">
-                <a-input v-model="email" />
-              </a-form-item>
-              <a-form-item label="Password">
-                <a-input-password v-model="password" />
-              </a-form-item>
-              <a-form-item style="position: relative">
-                <a-button type="primary" @click="login">
+          <el-card class="login-card" :style="{ width: '360px' }" title="Login"  v-if="this.isLogin" hoverable>
+            <el-col :span="24" style="margin-bottom: 15px" v-if="showTip">
+              <el-alert type="error" show-icon>{{tip}}</el-alert>
+            </el-col>
+            <el-form :label-position="labelPosition"
+                     label-width="70px"
+                     :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+              <el-form-item label="Email">
+                <el-input v-model="email" />
+              </el-form-item>
+              <el-form-item label="Password">
+                <el-input v-model="password" type="password"
+                          placeholder="Please input password"
+                          show-password/>
+              </el-form-item>
+              <el-form-item style="position: relative">
+                <el-button type="primary" @click="login">
                   Login
-                </a-button>
+                </el-button>
 
-                <a-button class="secondary-button" type="primary" @click="changeRegister">
+                <el-button class="secondary-button" type="primary" @click="changeRegister">
                   I'm new
-                </a-button>
-              </a-form-item>
-            </a-form>
-          </a-card>
-          <a-card class="register-card" :style="{ width: '360px' }" title="register" v-else>
-            <a-col :span="24" style="margin-bottom: 15px" v-if="showTip">
-              <a-alert type="error">{{tip}}</a-alert>
-            </a-col>
-            <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-              <a-form-item label="Username">
-                <a-input v-model="userName" />
-              </a-form-item>
-              <a-form-item label="Email">
-                <a-input v-model="email" />
-              </a-form-item>
-              <a-form-item label="Password">
-                <a-input-password v-model="password" />
-              </a-form-item>
-              <a-form-item wrapper-col="{ span: 12, offset: 5 }">
-                <a-button type="primary" @click="register">
+                </el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
+          <el-card class="register-card" :style="{ width: '360px' }" title="register" v-else>
+            <el-col :span="24" style="margin-bottom: 15px" v-if="showTip">
+              <el-alert type="error" show-icon>{{tip}}</el-alert>
+            </el-col>
+            <el-form :label-position="labelPosition"
+                     label-width="70px" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+              <el-form-item label="Username">
+                <el-input v-model="userName" />
+              </el-form-item>
+              <el-form-item label="Email">
+                <el-input v-model="email" />
+              </el-form-item>
+              <el-form-item label="Password">
+                <el-input v-model="password" type="password"
+                          placeholder="Please input password"
+                          show-password/>
+              </el-form-item>
+              <el-form-item wrapper-col="{ span: 12, offset: 5 }">
+                <el-button type="primary" @click="register">
                   Register
-                </a-button>
-                <a-button class="secondary-button" type="primary" @click="changeLogin">
+                </el-button>
+                <el-button class="secondary-button" type="primary" @click="changeLogin">
                   Login
-                </a-button>
-              </a-form-item>
-            </a-form>
-          </a-card>
+                </el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
         </div>
-      </a-layout-content>
-      <a-layout-footer>Footer</a-layout-footer>
-    </a-layout>
+      </el-main>
+      <el-footer>Footer</el-footer>
+    </el-container>
   </div>
 </template>
 
@@ -65,6 +72,8 @@ import '../assets/font/font.css'
 import { loginAPI, registerAPI } from '@/request/api'
 import { RegisterParams } from '@/request/params/RegisterParams'
 import { Constant } from '@/constant/constant'
+import { ElMessage } from 'element-plus'
+import { ref } from 'vue'
 @Options({
   components: {
     HelloWorld,
@@ -72,6 +81,7 @@ import { Constant } from '@/constant/constant'
   }
 })
 export default class HomeView extends Vue {
+  labelPosition = ref('left')
   isLogin = true
   userName = ''
   email = ''
@@ -84,12 +94,15 @@ export default class HomeView extends Vue {
     const registerParams = new RegisterParams(this.userName, this.email, this.password)
     registerAPI(registerParams).then((res) => {
       if (res.code === 200) {
-        this.$message.success('register success')
+        ElMessage({
+          message: 'Register success',
+          type: 'success'
+        })
         this.$router.push('/dashboard')
       } else {
         this.showTip = true
         this.tip = 'register failed'
-        this.$message.error('register failed')
+        ElMessage.error('Register failed')
       }
       console.log(res)
     }).catch(error => {
@@ -105,13 +118,16 @@ export default class HomeView extends Vue {
     const registerParams = new RegisterParams('', this.email, this.password)
     loginAPI(registerParams).then((res) => {
       if (res.code === 200) {
-        this.$message.success('login success')
+        ElMessage({
+          message: 'Login success',
+          type: 'success'
+        })
         localStorage.setItem(Constant.KEY_TOKEN, res.data.token)
         this.$router.push('/dashboard')
       } else {
         this.showTip = true
         this.tip = 'login failed'
-        this.$message.error('login failed')
+        ElMessage.error('Login failed')
       }
       console.log(res.data)
     }).catch(error => {
@@ -135,9 +151,9 @@ document.body.setAttribute('arco-theme', 'dark')
 </script>
 
 <style scoped>
-.layout-demo :deep(.arco-layout-header),
-.layout-demo :deep(.arco-layout-footer),
-.layout-demo :deep(.arco-layout-content) {
+.layout-demo :deep(.el-header),
+.layout-demo :deep(.el-footer),
+.layout-demo :deep(.el-main) {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -147,13 +163,13 @@ document.body.setAttribute('arco-theme', 'dark')
   text-align: center;
 }
 
-.layout-demo :deep(.arco-layout-header),
-.layout-demo :deep(.arco-layout-footer) {
+.layout-demo :deep(.el-header),
+.layout-demo :deep(.el-footer) {
   height: 64px;
   background-color: var(--color-bg-1);
 }
 
-.layout-demo :deep(.arco-layout-content) {
+.layout-demo :deep(.el-main) {
   background-color: rgb(var(--gray-1));
 }
 
