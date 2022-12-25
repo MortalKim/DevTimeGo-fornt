@@ -1,10 +1,15 @@
 <template>
   <div class="layout-demo" style="height: 100%;">
-    <a-layout style="height: 100%;">
+    <el-container style="height: 100%;">
       <Header/>
-      <a-layout-content>Content</a-layout-content>
-      <a-layout-footer>Footer</a-layout-footer>
-    </a-layout>
+      <el-main>
+        <div style="display: flex; flex-wrap: wrap" >
+          <div style="width: 600px; background: white;flex-grow: 1;">Responsive</div>
+          <div style="width: 600px; background: #42b983; flex-grow: 1;">ss</div>
+        </div>
+      </el-main>
+      <el-footer>Footer</el-footer>
+    </el-container>
   </div>
 </template>
 
@@ -24,8 +29,8 @@ export default class HomeView extends Vue {
 </script>
 
 <style scoped>
-.layout-demo :deep(.arco-layout-footer),
-.layout-demo :deep(.arco-layout-content) {
+.layout-demo :deep(.el-footer),
+.layout-demo :deep(.el-main) {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -35,12 +40,12 @@ export default class HomeView extends Vue {
   text-align: center;
 }
 
-.layout-demo :deep(.arco-layout-footer) {
+.layout-demo :deep(.el-footer) {
   height: 64px;
   background-color: var(--color-bg-1);
 }
 
-.layout-demo :deep(.arco-layout-content) {
+.layout-demo :deep(.el-main) {
   background-color: rgb(var(--gray-1));
 }
 </style>
