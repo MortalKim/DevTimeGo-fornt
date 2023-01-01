@@ -1,7 +1,13 @@
 <template>
-  <el-container style="height: 100%; width: 100%; background: var(--color-bg-1)">
-    <Header is-need-login="false"/>
-  </el-container>
+  <div class="layout-demo" style="height: 100%;">
+    <el-container style="height: 100%;">
+      <Header/>
+      <el-main>
+        Dashboard
+      </el-main>
+      <el-footer>Footer</el-footer>
+    </el-container>
+  </div>
 </template>
 
 <script>
