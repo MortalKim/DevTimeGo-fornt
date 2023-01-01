@@ -1,39 +1,38 @@
 <template>
   <div>
     <el-header style="background: var(--color-bg-1)">
-      <!--Horizontal layout-->
-      <div class="layout-header" style="display: flex;">
-        <div class="logo" >DevTimeGo</div>
-        <div class="modeToggle">
-          <el-switch  type="line" @change="onModeChange" v-model="isLightMode">
-<!--            <template #checked-icon>-->
-<!--              <icon-sun-fill />-->
-<!--            </template>-->
-<!--            <template #unchecked-icon>-->
-<!--              <icon-moon-fill />-->
-<!--            </template>-->
-          </el-switch>
+      <el-menu
+        :default-active="0"
+        class="el-menu-demo"
+        mode="horizontal"
+        :ellipsis="false"
+        @select="handleSelect"
+      >
+        <el-menu-item index="0">DevTimeGo</el-menu-item>
+        <div>
+          <el-switch class="modeToggle" @change="onModeChange" v-model="isLightMode"></el-switch>
         </div>
-        <div class="login" v-if="isNeedLogin === true">
-          <router-link to='/login'>
-            <el-button type="primary"><el-icon class="el-icon--left"><Avatar /></el-icon>Login</el-button>
-          </router-link>
-        </div>
-        <div class="login" style="color: var(--color-text-1);" v-else>
-            {{userName}}
-        </div>
-      </div>
+        <div class="flex-grow" />
+        <el-menu-item index="1">Dashboard</el-menu-item>
+        <el-menu-item index="2" v-if="isNeedLogin">Login</el-menu-item>
+        <el-sub-menu index="3" v-else>
+          <template #title>{{userName}}</template>
+          <el-menu-item index="3-1">Settings</el-menu-item>
+          <el-menu-item index="3-2">Logout</el-menu-item>
+        </el-sub-menu>
+      </el-menu>
     </el-header>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue } from 'vue-class-component'
-import { Prop } from 'vue-property-decorator/lib/decorators/Prop'
 import { Constant } from '@/constant/constant'
 import { useDark, useToggle } from '@vueuse/core'
+import router from '../router'
 export default class Header extends Vue {
-  @Prop({ default: true }) isNeedLogin!: boolean;
+  self = this
+  isNeedLogin!: boolean;
   userName = ''
   isLightMode = useDark()
   onModeChange (bool: boolean) {
@@ -43,13 +42,40 @@ export default class Header extends Vue {
 
   mounted () {
     console.log('mounted' + this.isNeedLogin)
-    if (this.isNeedLogin) {
-      const userInfo = localStorage.getItem(Constant.KEY_USER_INFO)
-      if (userInfo) {
-        this.userName = JSON.parse(userInfo).username
-      } else {
-        this.userName = ''
-      }
+    const userInfo = localStorage.getItem(Constant.KEY_USER_INFO)
+    if (userInfo) {
+      this.isNeedLogin = false
+      this.userName = JSON.parse(userInfo).username
+    } else {
+      this.isNeedLogin = true
+      this.userName = 'Null'
+    }
+  }
+
+  handleSelect = (key: string, keyPath: string[]) => {
+    switch (key) {
+      case '0':
+        this.$emit('menu-click', 'home')
+        break
+      case '1':
+        this.$emit('menu-click', 'dashboard')
+        break
+      case '2':
+        console.log(this)
+        router.push({ path: '/login' })
+        // this.$emit('menu-click', 'login')
+        break
+      case '3-1':
+        this.$emit('menu-click', 'settings')
+        break
+      case '3-2':
+        localStorage.clear()
+        router.push({ path: '/' })
+        this.$emit('menu-click', 'logout')
+        break
+      default:
+        this.$emit('menu-click', 'home')
+        break
     }
   }
 }
@@ -108,7 +134,12 @@ document.body.setAttribute('arco-theme', 'dark')
 }
 
 .modeToggle {
-  text-align: left;
-  vertical-align:middle;
+  height: 58px;
+  padding: 0 24px;
+  color: var(--color-text-1);
+}
+
+.flex-grow {
+  flex-grow: 1;
 }
 </style>

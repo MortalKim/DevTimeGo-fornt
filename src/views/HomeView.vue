@@ -1,12 +1,9 @@
 <template>
   <div class="layout-demo" style="height: 100%;">
     <el-container style="height: 100%;">
-      <Header/>
+      <Header @menu-click="handleMenuClick"/>
       <el-main>
-        <div style="display: flex; flex-wrap: wrap" >
-          <div style="width: 600px; background: white;flex-grow: 1;">Responsive</div>
-          <div style="width: 600px; background: #42b983; flex-grow: 1;">ss</div>
-        </div>
+        <component :is="component"></component>
       </el-main>
       <el-footer>Footer</el-footer>
     </el-container>
@@ -18,6 +15,7 @@ import { Options, Vue } from 'vue-class-component'
 import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
 import Header from '@/components/Header.vue'
 import '../assets/font/font.css'
+import HomeViewContent from '@/components/HomeViewContent.vue'
 @Options({
   components: {
     HelloWorld,
@@ -25,6 +23,21 @@ import '../assets/font/font.css'
   }
 })
 export default class HomeView extends Vue {
+  component = HomeViewContent
+  handleMenuClick (event: string) {
+    switch (event) {
+      case 'home':
+        this.component = HomeViewContent
+        break
+      case 'dashboard':
+        break
+      case 'login':
+        break
+      default:
+        this.component = HomeViewContent
+        break
+    }
+  }
 }
 </script>
 
