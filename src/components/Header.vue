@@ -2,23 +2,23 @@
   <div>
     <el-header style="background: var(--color-bg-1)">
       <el-menu
-        :default-active="0"
+        :default-active="$route.path"
         class="el-menu-demo"
         mode="horizontal"
         :ellipsis="false"
-        @select="handleSelect"
+        :router="true"
       >
-        <el-menu-item index="0">DevTimeGo</el-menu-item>
+        <el-menu-item index="/">DevTimeGo</el-menu-item>
         <div>
           <el-switch class="modeToggle" @change="onModeChange" v-model="isLightMode"></el-switch>
         </div>
         <div class="flex-grow" />
-        <el-menu-item index="1">Dashboard</el-menu-item>
-        <el-menu-item index="2" v-if="isNeedLogin">Login</el-menu-item>
+        <el-menu-item index="/dashboard">Dashboard</el-menu-item>
+        <el-menu-item index="/login" v-if="isNeedLogin">Login</el-menu-item>
         <el-sub-menu index="3" v-else>
           <template #title>{{userName}}</template>
-          <el-menu-item index="3-1">Settings</el-menu-item>
-          <el-menu-item index="3-2">Logout</el-menu-item>
+          <el-menu-item index="settings">Settings</el-menu-item>
+          <el-menu-item index="logout" click="logout">Logout</el-menu-item>
         </el-sub-menu>
       </el-menu>
     </el-header>
@@ -32,7 +32,7 @@ import { useDark, useToggle } from '@vueuse/core'
 import router from '../router'
 export default class Header extends Vue {
   self = this
-  isNeedLogin!: boolean;
+  isNeedLogin = false
   userName = ''
   isLightMode = useDark()
   onModeChange (bool: boolean) {
@@ -40,8 +40,13 @@ export default class Header extends Vue {
     const toggleDark = useToggle(!bool)
   }
 
+  logout () {
+    localStorage.clear()
+    router.push({ path: '/' })
+  }
+
   mounted () {
-    console.log('mounted' + this.isNeedLogin)
+    console.log('mounted' + router.currentRoute.value.fullPath)
     const userInfo = localStorage.getItem(Constant.KEY_USER_INFO)
     if (userInfo) {
       this.isNeedLogin = false
@@ -49,33 +54,6 @@ export default class Header extends Vue {
     } else {
       this.isNeedLogin = true
       this.userName = 'Null'
-    }
-  }
-
-  handleSelect = (key: string, keyPath: string[]) => {
-    switch (key) {
-      case '0':
-        this.$emit('menu-click', 'home')
-        break
-      case '1':
-        this.$emit('menu-click', 'dashboard')
-        break
-      case '2':
-        console.log(this)
-        router.push({ path: '/login' })
-        // this.$emit('menu-click', 'login')
-        break
-      case '3-1':
-        this.$emit('menu-click', 'settings')
-        break
-      case '3-2':
-        localStorage.clear()
-        router.push({ path: '/' })
-        this.$emit('menu-click', 'logout')
-        break
-      default:
-        this.$emit('menu-click', 'home')
-        break
     }
   }
 }

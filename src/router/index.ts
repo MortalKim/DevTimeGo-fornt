@@ -42,6 +42,12 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if (to.path === '/logout') {
+    localStorage.clear()
+    next({
+      path: '/'
+    })
+  }
   if (to.meta.title) {
     document.title = to.meta.title + ' - DevTimeGO'
   }
