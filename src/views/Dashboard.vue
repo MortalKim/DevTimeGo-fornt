@@ -9,8 +9,9 @@
               Today {{todayGrandTotal}}
             </div>
             <div class="card-content">
-              <div style="width: 600px; background: white;flex-grow: 1;">Responsive</div>
-              <div style="width: 600px; background: #42b983; flex-grow: 1;">ss</div>
+              <TodayTimeLine/>
+<!--              <div style="width: 600px; background: white;flex-grow: 1;">Responsive</div>-->
+<!--              <div style="width: 600px; background: #42b983; flex-grow: 1;">ss</div>-->
             </div>
         </div>
       </el-main>
@@ -25,9 +26,11 @@ import { getTodayInfoAPI } from '@/request/api'
 import { ElContainer, ElMain, ElFooter } from 'element-plus'
 import { Options, Vue } from 'vue-class-component'
 import HelloWorld from '@/components/HelloWorld.vue'
+import TodayTimeLine from '@/components/charts/TodayTimeLine.vue'
 @Options({
   components: {
-    Header
+    Header,
+    TodayTimeLine
   }
 })
 export default class Dashboard extends Vue {
@@ -43,6 +46,7 @@ export default class Dashboard extends Vue {
 <style scoped>
 .radius {
   width: 80%;
+  height: auto;
   padding: 10%;
   border: 1px solid var(--el-border-color);
   border-radius: 0;
