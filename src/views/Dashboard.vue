@@ -9,9 +9,7 @@
               Today {{todayGrandTotal}}
             </div>
             <div class="card-content">
-              <TodayTimeLine/>
-<!--              <div style="width: 600px; background: white;flex-grow: 1;">Responsive</div>-->
-<!--              <div style="width: 600px; background: #42b983; flex-grow: 1;">ss</div>-->
+              <TodayTimeLine style="flex-grow: 1;"/>
             </div>
         </div>
       </el-main>
@@ -22,10 +20,9 @@
 
 <script lang="ts">
 import Header from '@/components/Header.vue'
-import { getTodayInfoAPI } from '@/request/api'
+import { getTodayDurationAPI, getTodayInfoAPI } from '@/request/api'
 import { ElContainer, ElMain, ElFooter } from 'element-plus'
 import { Options, Vue } from 'vue-class-component'
-import HelloWorld from '@/components/HelloWorld.vue'
 import TodayTimeLine from '@/components/charts/TodayTimeLine.vue'
 @Options({
   components: {
@@ -40,34 +37,40 @@ export default class Dashboard extends Vue {
     getTodayInfoAPI().then((res) => {
       this.todayGrandTotal = res.data.grand_total.text
     })
+    this.getTodayDuration()
+  }
+
+  getTodayDuration () {
+    getTodayDurationAPI().then((res) => {
+      console.log(res)
+    })
   }
 }
 </script>
 <style scoped>
 .radius {
-  width: 80%;
-  height: auto;
-  padding: 10%;
+  width: calc(100% - 50px);
+  padding: 10px 24px 24px;
   border: 1px solid var(--el-border-color);
   border-radius: 0;
   position: relative;
   text-align:left;
   margin-top: 20px;
+  overflow: auto;
 }
 .card-content{
-  display: flex;
+  height: 100%;
+  width: 50%;
+  position: relative;
   flex-wrap: wrap;
-  position: absolute;
-  top: 68px;
+  top: 18px;
   bottom: 10px;
-  left: 10px;
-  right: 10px;
+  overflow: clip;
 }
 .card-title{
-  position: absolute;
+  position: relative;
   top: 10px;
   left: 10px;
-  right: 10px;
   font-size: 26px;
 }
 </style>
