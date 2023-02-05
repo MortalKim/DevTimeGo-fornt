@@ -4,6 +4,8 @@ import { ResponseBase } from '@/request/response/responseBase'
 import { LoginResponse } from '@/request/response/loginResponse'
 import { AxiosResponse } from 'axios'
 import { TodayInfo } from './response/TodayInfo'
+import { DurationSearchParams } from '@/request/params/DurationSearchParams'
+import { Constant } from '@/constant/constant'
 
 export const LogoutAPI = () => instance.post('/admin/logout')
 
@@ -18,3 +20,8 @@ export const registerAPI = (data: RegisterParams): Promise<ResponseBase<string>>
 
 export const getTodayInfoAPI = (): Promise<TodayInfo> =>
   instance.get('/api/v1/users/current/statusbar/today')
+
+export const getTodayDurationAPI = (): Promise<TodayInfo> => {
+  const params = new DurationSearchParams('', Date.parse(new Date().toString()))
+  return instance.get('/api/v1/users/current/durations', { params })
+}
