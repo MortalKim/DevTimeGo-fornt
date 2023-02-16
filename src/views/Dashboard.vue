@@ -9,7 +9,7 @@
               Today {{todayGrandTotal}}
             </div>
             <div class="card-content">
-              <TodayTimeLine style="flex-grow: 1;"/>
+              <TodayTimeLine style="flex-grow: 1;" ref="todayTimeLine"/>
             </div>
         </div>
       </el-main>
@@ -24,6 +24,8 @@ import { getTodayDurationAPI, getTodayInfoAPI } from '@/request/api'
 import { ElContainer, ElMain, ElFooter } from 'element-plus'
 import { Options, Vue } from 'vue-class-component'
 import TodayTimeLine from '@/components/charts/TodayTimeLine.vue'
+import { ref } from 'vue'
+import { TodayInfo } from '@/request/response/TodayInfo'
 @Options({
   components: {
     Header,
@@ -31,10 +33,17 @@ import TodayTimeLine from '@/components/charts/TodayTimeLine.vue'
   }
 })
 export default class Dashboard extends Vue {
+  // eslint-disable-next-line no-undef
+  declare $refs: {
+    todayTimeLine: TodayTimeLine
+  }
+
   name= 'page_Dashboard'
   todayGrandTotal= ''
+  todayInfo:TodayInfo | undefined
   mounted () {
     getTodayInfoAPI().then((res) => {
+      this.todayInfo = res
       this.todayGrandTotal = res.data.grand_total.text
     })
     this.getTodayDuration()
@@ -42,7 +51,7 @@ export default class Dashboard extends Vue {
 
   getTodayDuration () {
     getTodayDurationAPI().then((res) => {
-      console.log(res)
+      this.$refs.todayTimeLine.loadData(this.todayInfo?.data.projects, res)
     })
   }
 }

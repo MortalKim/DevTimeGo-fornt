@@ -1,29 +1,43 @@
 <template>
-    <div id="container" style="height: 350px;"></div>
+    <div id="container" style="height: 350px;" ref="container"></div>
 </template>
 
 <script lang="ts">
 import { Vue } from 'vue-class-component'
 import { CanvasRenderer } from 'echarts/renderers'
-import * as echarts from 'echarts/core'
-import { TooltipComponent, TitleComponent, DataZoomComponent, GridComponent } from 'echarts/components'
+import * as echarts from 'echarts'
+import * as echartsCore from 'echarts/core'
+import { DataZoomComponent, GridComponent, TitleComponent, TooltipComponent } from 'echarts/components'
+import { Duration } from '@/request/response/Duration'
+import dayjs from 'dayjs'
 
 export default class TodayTimeLine extends Vue {
-  mounted () {
-    const dom = document.getElementById('container')
-    echarts.use(CanvasRenderer)
-    echarts.use([TooltipComponent, TitleComponent, DataZoomComponent, GridComponent])
+  declare $refs: {
+    container: HTMLDivElement
+  }
 
-    const myChart = echarts.init(dom!, '', {
-      renderer: 'canvas',
-      useDirtyRect: false
-    })
-    const canvasWidth = dom!.offsetWidth
-    myChart.resize({ width: canvasWidth })
-    const data: never[] = []
-    const dataCount = 10
-    const startTime = +new Date()
-    const categories = ['categoryA', 'categoryB', 'categoryC', 'categoryD']
+  chatData: Duration[] = []
+  startTime = +new Date()
+  categories: string[]= []
+  myChart: echarts.ECharts | undefined
+  endTime: number | undefined
+  mounted () {
+    // this.renderChart()
+  }
+
+  renderChart () {
+    echartsCore.use(CanvasRenderer)
+    echartsCore.use([TooltipComponent, TitleComponent, DataZoomComponent, GridComponent])
+    // const dom = document.getElementById('container')
+    if (this.myChart === undefined) {
+      this.myChart = echarts.init(this.$refs.container, '', {
+        renderer: 'canvas',
+        useDirtyRect: false
+      })
+    }
+    const canvasWidth = this.$refs.container.offsetWidth
+    this.myChart.resize({ width: canvasWidth })
+    const startTime = this.startTime
     const types = [
       {
         name: 'JS Heap',
@@ -50,6 +64,41 @@ export default class TodayTimeLine extends Vue {
         color: '#72b362'
       }
     ]
+    const data: { name: string; value: number[]; itemStyle: { normal: { color: string } } }[] = []
+
+    this.chatData.forEach((cdata, index) => {
+      console.log('cdata', cdata)
+      const date = dayjs(cdata.time)
+      const timestamp = date.unix()
+      var number = Number(timestamp)
+      const categoryIndex = this.categories.indexOf(cdata.project)
+      data.push({
+        name: types[0].name,
+        value: [categoryIndex, number, (number + cdata.duration), cdata.duration],
+        itemStyle: {
+          normal: {
+            color: types[0].color
+          }
+        }
+      })
+    })
+    // this.categories.forEach(function (category, index) {
+    //   var baseTime = startTime
+    //   for (var i = 0; i < 10; i++) {
+    //     var typeItem = types[Math.round(Math.random() * (types.length - 1))]
+    //     var duration = Math.round(Math.random() * 10000)
+    //     data.push({
+    //       name: typeItem.name,
+    //       value: [index, baseTime, (baseTime += duration), duration],
+    //       itemStyle: {
+    //         normal: {
+    //           color: typeItem.color
+    //         }
+    //       }
+    //     })
+    //     baseTime += Math.round(Math.random() * 2000)
+    //   }
+    // })
     function renderItem (params: any, api: any) {
       const categoryIndex = api.value(0)
       const start = api.coord([api.value(1), categoryIndex])
@@ -107,15 +156,18 @@ export default class TodayTimeLine extends Vue {
       // },
       xAxis: {
         min: startTime,
+        max: this.endTime,
         scale: true,
         axisLabel: {
           formatter: function (val: any) {
-            return Math.max(0, val - startTime) + ' ms'
+            const date = dayjs.unix(val)
+            const formattedDate = date.format('HH:mm')
+            return formattedDate
           }
         }
       },
       yAxis: {
-        data: categories
+        data: this.categories
       },
       series: [
         {
@@ -132,11 +184,29 @@ export default class TodayTimeLine extends Vue {
         }
       ]
     }
-
     if (option && typeof option === 'object') {
-      myChart.setOption(option)
+      console.log('start: ', option, ' and ')
+      this.myChart.clear()
+      this.myChart.setOption(option, true)
     }
     // window.addEventListener('resize', myChart.resize);
+  }
+
+  loadData (projects: any, data:Duration[]) {
+    this.categories.splice(0, this.categories.length)
+    projects.forEach((project: any) => {
+      this.categories.push(project.name)
+    })
+    const set = new Set<string>(this.categories)
+    this.categories = Array.from(set)
+    const start = dayjs().startOf('day')
+    const end = dayjs().endOf('day')
+    const startTimestamp = start.unix()
+    const endTimestamp = end.unix()
+    this.startTime = startTimestamp
+    this.endTime = endTimestamp
+    this.chatData = data
+    this.renderChart()
   }
 }
 
