@@ -9,7 +9,8 @@
               Today {{todayGrandTotal}}
             </div>
             <div class="card-content">
-              <TodayTimeLine style="flex-grow: 1;" ref="todayTimeLine"/>
+              <TodayProjectTimeLine style="width: 400px; flex-grow: 1; flex: 1 0 50%;" ref="todayProjectTimeLine"/>
+              <TodayLanguageTimeLine style="width: 400px; flex-grow: 1; flex: 1 0 50%; " ref="todayLanguageTimeLine"/>
             </div>
         </div>
       </el-main>
@@ -23,19 +24,22 @@ import Header from '@/components/Header.vue'
 import { getTodayDurationAPI, getTodayInfoAPI } from '@/request/api'
 import { ElContainer, ElMain, ElFooter } from 'element-plus'
 import { Options, Vue } from 'vue-class-component'
-import TodayTimeLine from '@/components/charts/TodayTimeLine.vue'
+import TodayLanguageTimeLine from '@/components/charts/TodayLanguageTimeLine.vue'
 import { ref } from 'vue'
 import { TodayInfo } from '@/request/response/TodayInfo'
+import TodayProjectTimeLine from '@/components/charts/TodayProjectTimeLine.vue'
 @Options({
   components: {
     Header,
-    TodayTimeLine
+    TodayProjectTimeLine,
+    TodayLanguageTimeLine
   }
 })
 export default class Dashboard extends Vue {
   // eslint-disable-next-line no-undef
   declare $refs: {
-    todayTimeLine: TodayTimeLine
+    todayProjectTimeLine: TodayProjectTimeLine,
+    todayLanguageTimeLine: TodayLanguageTimeLine
   }
 
   name= 'page_Dashboard'
@@ -51,7 +55,8 @@ export default class Dashboard extends Vue {
 
   getTodayDuration () {
     getTodayDurationAPI().then((res) => {
-      this.$refs.todayTimeLine.loadData(this.todayInfo?.data.projects, res)
+      this.$refs.todayProjectTimeLine.loadData(this.todayInfo?.data.projects, res)
+      this.$refs.todayLanguageTimeLine.loadData(this.todayInfo?.data.languages, res)
     })
   }
 }
@@ -69,12 +74,13 @@ export default class Dashboard extends Vue {
 }
 .card-content{
   height: 100%;
-  width: 50%;
+  width: 100%;
   position: relative;
   flex-wrap: wrap;
   top: 18px;
   bottom: 10px;
-  overflow: clip;
+  overflow: hidden;
+  display: flex;
 }
 .card-title{
   position: relative;

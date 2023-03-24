@@ -11,7 +11,7 @@ import { DataZoomComponent, GridComponent, TitleComponent, TooltipComponent } fr
 import { Duration } from '@/request/response/Duration'
 import dayjs from 'dayjs'
 
-export default class TodayTimeLine extends Vue {
+export default class TodayLanguageTimeLine extends Vue {
   declare $refs: {
     container: HTMLDivElement
   }
@@ -35,8 +35,16 @@ export default class TodayTimeLine extends Vue {
         useDirtyRect: false
       })
     }
-    const canvasWidth = this.$refs.container.offsetWidth
+    const canvasWidth = this.$refs.container.clientWidth
     this.myChart.resize({ width: canvasWidth })
+    const chart = this.myChart
+
+    const observer = new ResizeObserver(() => {
+      chart.resize({ width: this.$refs.container.clientWidth })
+    })
+
+    observer.observe(this.$refs.container)
+
     const startTime = this.startTime
     const types = [
       {
@@ -71,7 +79,7 @@ export default class TodayTimeLine extends Vue {
       const date = dayjs(cdata.time)
       const timestamp = date.unix()
       var number = Number(timestamp)
-      const categoryIndex = this.categories.indexOf(cdata.project)
+      const categoryIndex = this.categories.indexOf(cdata.language)
       data.push({
         name: types[0].name,
         value: [categoryIndex, number, (number + cdata.duration), cdata.duration],
@@ -135,7 +143,7 @@ export default class TodayTimeLine extends Vue {
         }
       },
       title: {
-        text: 'Your Projects Timeline Today',
+        text: 'Your Language Timeline Today',
         left: 'center'
       },
       dataZoom: [
