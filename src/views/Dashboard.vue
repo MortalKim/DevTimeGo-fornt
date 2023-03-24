@@ -11,6 +11,7 @@
             <div class="card-content">
               <TodayProjectTimeLine style="width: 400px; flex-grow: 1; flex: 1 0 50%;" ref="todayProjectTimeLine"/>
               <TodayLanguageTimeLine style="width: 400px; flex-grow: 1; flex: 1 0 50%; " ref="todayLanguageTimeLine"/>
+              <PieEditorChart style="width: 400px; flex-grow: 1; flex: 1 0 50%; " ref="pieEditorChart"/>
             </div>
         </div>
       </el-main>
@@ -28,18 +29,36 @@ import TodayLanguageTimeLine from '@/components/charts/TodayLanguageTimeLine.vue
 import { ref } from 'vue'
 import { TodayInfo } from '@/request/response/TodayInfo'
 import TodayProjectTimeLine from '@/components/charts/TodayProjectTimeLine.vue'
+import PieEditorChart from '@/components/charts/PieEditorChart.vue'
+
+interface PieChartData {
+  decimal: string;
+  digital: string;
+  hours: number;
+  minutes: number;
+  name: string;
+  percent: number;
+  seconds: number;
+  text: string;
+  // eslint-disable-next-line camelcase
+  total_seconds: number;
+}
+
 @Options({
   components: {
     Header,
     TodayProjectTimeLine,
-    TodayLanguageTimeLine
+    TodayLanguageTimeLine,
+    PieEditorChart
   }
 })
+
 export default class Dashboard extends Vue {
   // eslint-disable-next-line no-undef
   declare $refs: {
     todayProjectTimeLine: TodayProjectTimeLine,
-    todayLanguageTimeLine: TodayLanguageTimeLine
+    todayLanguageTimeLine: TodayLanguageTimeLine,
+    pieEditorChart: typeof PieEditorChart
   }
 
   name= 'page_Dashboard'
@@ -49,6 +68,7 @@ export default class Dashboard extends Vue {
     getTodayInfoAPI().then((res) => {
       this.todayInfo = res
       this.todayGrandTotal = res.data.grand_total.text
+      this.$refs.pieEditorChart.loadData(res.data.editors)
     })
     this.getTodayDuration()
   }
